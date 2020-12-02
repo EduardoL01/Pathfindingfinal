@@ -8,7 +8,7 @@ public:
 	Example()
 	{
 		// Name you application
-		sAppName = "Example";
+		sAppName = "Pathfindingfinal";
 	}
 
 public:
@@ -23,7 +23,7 @@ public:
 		// Called once per frame, draws random coloured pixels
 		for (int x = 0; x < ScreenWidth(); x++)
 			for (int y = 0; y < ScreenHeight(); y++)
-				Draw(x, y, olc::Pixel(rand() % 256, rand() % 256, rand() % 256));
+				Draw(x, y, olc::Pixel(254, 100, 253));
 		return true;
 	}
 };
@@ -41,7 +41,7 @@ public:
 int main()
 {
 	Example demo;
-	if (demo.Construct(256, 240, 4, 4))
+	if (demo.Construct(32, 32, 16, 16))
 		demo.Start();
 	return 0;
 }
