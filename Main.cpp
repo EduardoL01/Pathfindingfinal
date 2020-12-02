@@ -3,7 +3,6 @@
 int main()
 {
 
-
-	std::cout << "ey yo fuck github";
+	std::cout << "ey yo fuck github times 2";
 
 }
