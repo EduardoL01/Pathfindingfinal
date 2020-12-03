@@ -1,14 +1,12 @@
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 
-// Override base class with your custom functionality
 class Example : public olc::PixelGameEngine
 {
 public:
 	Example()
 	{
-		// Name you application
-		sAppName = "Pathfindingfinal";
+		sAppName = "Example";
 	}
 
 public:
@@ -20,18 +18,20 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		// Called once per frame, draws random coloured pixels
+		// called once per frame
 		for (int x = 0; x < ScreenWidth(); x++)
 			for (int y = 0; y < ScreenHeight(); y++)
-				Draw(x, y, olc::Pixel(254, 100, 253));
+				Draw(x, y, olc::Pixel(rand() % 255, rand() % 255, rand() % 255));
 		return true;
 	}
 };
 
+
 int main()
 {
 	Example demo;
-	if (demo.Construct(32, 32, 16, 16))
+	if (demo.Construct(256, 240, 4, 4))
 		demo.Start();
+
 	return 0;
 }
