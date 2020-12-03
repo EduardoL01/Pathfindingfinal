@@ -1,7 +1,9 @@
 #pragma once
 #include "olcPixelGameEngine.h"
-#include <iostream>
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 class Maze
@@ -10,7 +12,6 @@ class Maze
 	vector<vector<int>> theMaze;
 	int width = 0;
 	int height = 0;
-
 public:
 	Maze();
 	void setVertex(int x, int y, int val);

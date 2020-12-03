@@ -13,6 +13,16 @@ Maze::Maze()
 	}
 }
 
+void Maze::setVertex(int x, int y, int val)
+{
+
+}
+
+int Maze::getVertex(int x, int y)
+{
+
+}
+
 void Maze::GenerateMaze(int width, int height)
 {
 
