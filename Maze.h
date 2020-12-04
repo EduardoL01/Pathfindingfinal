@@ -4,17 +4,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 using namespace std;
 
-class Maze
+struct Maze																			
 {
-	//Maze where 0 represents a wall, 1 represents a path, 2 represents the start/end
-	vector<vector<int>> theMaze;
-	int width = 0;
-	int height = 0;
-public:
+
+	struct node {																	//each nodes need to store its neighbors and whether is a flag or wall
+		int tile = 1;																// 0 - wall, 1 - empty, 2 - flag
+		vector<node*> adj;
+	};
+
+	
+	vector<vector<node>> graph;														//stores our out-degree edges, each non-border node connects to its adj neighbor
+	int w = 0;
+	int h = 0;
+	pair<int,int> start = make_pair(0,0);
+	pair<int,int> end = make_pair(0, 0);
+
 	Maze();
-	void setVertex(int x, int y, int val);
+	void randomize();
+	void addVx(int x, int y, int val);
 	int getVertex(int x, int y);
 	void GenerateMaze(int width, int height);
 	int Djikstra();
