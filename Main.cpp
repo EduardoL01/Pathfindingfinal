@@ -7,6 +7,11 @@ class Pathfinder : public olc::PixelGameEngine
 public:
 
 	Maze maze;
+	bool randomize = 0;
+	bool vBFS = 0;
+	bool vDFS = 0;
+	bool vDjs = 0;
+	bool draw = 0;
 
 	Pathfinder()
 	{
