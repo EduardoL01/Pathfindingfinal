@@ -2,8 +2,8 @@
 
 Maze::Maze()
 {
-	w = 100;								//TODO: BUG FOUND if h < w, subscript error
-	h = 90;
+	w = 45;														//TODO: BUG FOUND if h < w, subscript error
+	h = 40;
 
 	start = make_pair(0, 0);
 	end = make_pair(w - 1, h - 1);
@@ -78,7 +78,7 @@ Maze::Maze()
 	graph[end.first][end.second].tile = 2;
 	sNode = &graph[start.first][start.second];
 	eNode = &graph[end.first][end.second];
-	randomize();
+	//randomize();
 }
 
 void Maze::addVx(int x, int y, int val)
@@ -91,18 +91,15 @@ void Maze::randomize()
 	node* current = NULL;
 	node* chosen = NULL;
 	//initialize random seed
-	//srand(time(NULL));
 	srand(1);
-	//intitialize a stack
-	stack<node*> s;
-	//push starting node onto stack and mark as visited
-	s.push(sNode);
+	//push starting node onto rstack and mark as visited
+	rStack.push(sNode);
 	sNode->visited = true;
 	//while the stack is not empty
-	while (!s.empty())
+	while (!rStack.empty())
 	{
 		//pop node from stack and make it current node
-		current = s.top();
+		current = rStack.top();
 
 		vector<node*> unvisit = current->returnAdj();
 
@@ -116,19 +113,11 @@ void Maze::randomize()
 			chosen->visited = 1;
 			current->neighbors.push_back(chosen);
 			chosen->neighbors.push_back(current);
-
-			/*for (auto n : unvisit)
-			{
-				if (n != chosen)
-				{
-					s.push(n);
-				}
-			}*/
-			s.push(chosen);
+			rStack.push(chosen);
 		}
 		else
 		{
-			s.pop();
+			rStack.pop();
 		}
 	}
 

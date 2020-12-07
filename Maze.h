@@ -13,11 +13,11 @@ struct Maze
 {
 
 	struct node {																	//each nodes need to store its neighbors and whether is a flag or wall
-		int tile = 1;																// 0 - wall, 1 - empty, 2 - flag
+		int tile = 1;
+		pair<int, int> loc;															// 0 - wall, 1 - empty, 2 - flag
 		vector<node*> neighbors;
 		vector<node*> adj;
-		bool visited = false;
-		pair<int, int> loc;
+		bool visited = false;		
 		vector<node*> returnAdj()
 		{
 			vector<node*> nVisit;
@@ -54,6 +54,7 @@ struct Maze
 	vector<vector<node>> graph;														//stores our out-degree edges, each non-border node connects to its adj neighbor
 	int w = 0;
 	int h = 0;
+	stack<Maze::node*> rStack;																	//is the randomize stack
 	node* sNode;
 	node* eNode;
 	pair<int,int> start = make_pair(0,0);
@@ -61,6 +62,7 @@ struct Maze
 
 	Maze();
 	void randomize();
+	void randomizeDraw();
 	void addVx(int x, int y, int val);
 	int getVertex(int x, int y);
 	void addEdge(node* from, node* to);
