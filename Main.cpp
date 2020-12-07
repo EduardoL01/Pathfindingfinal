@@ -7,6 +7,8 @@ class Pathfinder : public olc::PixelGameEngine
 public:
 
 	Maze maze;
+	bool randomize = 0, startup = 0, bfs = 0, dfs = 0, djs = 0, astar = 0, reset = 0;
+	bool rComplete = 0, startupComplete = 0, dfsComplete = 0, bfsComplete = 0, djsComplete = 0, astarComplete = 0;
 
 	Pathfinder()
 	{
@@ -14,6 +16,107 @@ public:
 	}
 
 public:
+
+	void finishRand()
+	{
+		Maze::node* current = NULL;
+		Maze::node* chosen = NULL;
+		
+		//push starting node onto rstack and mark as visited only if stack is empty
+		if (maze.rStack.empty())
+		{
+			maze.rStack.push(maze.sNode);
+			maze.sNode->visited = true;
+		}
+		
+		//while the stack is not empty
+		while (!maze.rStack.empty())
+		{
+			//pop node from stack and make it current node
+			current = maze.rStack.top();
+
+			vector<Maze::node*> unvisit = current->returnAdj();
+
+			if (!unvisit.empty())
+			{
+				//choose a random unvisited neighbor
+				chosen = unvisit[rand() % unvisit.size()];
+
+				if (chosen->tile != 2)
+				{
+					chosen->tile = 1;
+				}
+				chosen->visited = 1;
+				current->neighbors.push_back(chosen);
+				chosen->neighbors.push_back(current);
+				maze.rStack.push(chosen);
+			}
+			else
+			{
+				maze.rStack.pop();
+			}
+		}
+	}
+
+	bool randomizeDraw(bool init)
+	{
+		Maze::node* chosen = NULL;
+		Maze::node* current = NULL;
+		//push starting node onto rstack and mark as visited if we're beginning randomize process
+		if (init)
+		{
+			maze.rStack.push(maze.sNode);
+			maze.sNode->visited = true;
+		}
+		
+		//while the stack is not empty
+		if (!maze.rStack.empty())
+		{
+			//pop node from stack and make it current node
+			current = maze.rStack.top();
+
+			vector<Maze::node*> unvisit = current->returnAdj();
+
+			if (!unvisit.empty())
+			{
+				//choose a random unvisited neighbor
+				chosen = unvisit[rand() % unvisit.size()];
+
+				//process chosen
+				if (chosen->tile != 2)
+				{
+					chosen->tile = 1;
+				}
+				
+				chosen->visited = 1;
+				current->neighbors.push_back(chosen);
+				chosen->neighbors.push_back(current);
+				maze.rStack.push(chosen);
+			}
+			else
+			{
+				maze.rStack.pop();
+			}
+		}
+		else
+		{
+			return false;
+		}
+
+		int x = current->loc.first + 1;
+		int y = current->loc.second + 1;
+		FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::GREEN));
+		if (maze.graph[x - 1][y - 1].returnPaths().first)							//if it has an east connection, draw it
+		{
+			DrawLine((x * 10) + 9, y * 10, (x * 10) + 9, (y * 10) + 8, olc::WHITE);
+		}
+		if (maze.graph[x - 1][y - 1].returnPaths().second)							//if it has a south connection, draw it
+		{
+			DrawLine((x * 10), (y * 10) + 9, (x * 10) + 8, (y * 10) + 9, olc::WHITE);
+		}
+		return true;
+	}
+
 	void drawMaze()
 	{
 		for (int x = 1; x <= maze.w; x++)												//ScreenWidth(); x++)
@@ -26,7 +129,7 @@ public:
 						break;
 					case 0:
 					{
-						FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::BLACK));
+						FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::BLUE));
 						break;
 					}
 					case 1:
@@ -44,7 +147,7 @@ public:
 					}
 					case 2:
 					{
-						FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::BLUE));
+						FillRect(x * 10, y * 10, 9, 9, olc::Pixel(255, 128, 0));					//draws an orange pixel
 						if (maze.graph[x - 1][y - 1].returnPaths().first)							//if it has an east connection, draw it
 						{
 							DrawLine((x * 10) + 9, y * 10, (x * 10) + 9, (y * 10) + 8, olc::WHITE);
@@ -63,18 +166,73 @@ public:
 		}
 	}
 
+	bool OnUserReset()
+	{
+		this->maze = Maze();
+		Maze::node* stackNode = NULL;
+		randomize = 0, startup = 0, bfs = 0, dfs = 0, djs = 0, astar = 0, reset = 0;
+		rComplete = 0, startupComplete = 0, dfsComplete = 0, bfsComplete = 0, djsComplete = 0, astarComplete = 0;
+		return true;
+	}
+
 	bool OnUserCreate() override
 	{
 		// Called once at the start, so create things here
 		Maze maze;
+		Maze::node* stackNode = NULL;
+		randomize = 0, startup = 0, bfs = 0, dfs = 0, djs = 0, astar = 0, reset = 0;
+		rComplete = 0, startupComplete = 0, dfsComplete = 0, bfsComplete = 0, djsComplete = 0, astarComplete = 0;
+		srand(1);
 		return true;
 	}
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		// called once per frame
-		Clear(olc::Pixel(olc::BLACK));		
+		//this_thread::sleep_for(0.5ms);
+		Clear(olc::Pixel(olc::BLACK));
 		drawMaze();
+
+		if (GetKey(olc::Key::S).bPressed)
+		{
+			randomize = true;
+			startup = true;
+		}
+		else if (GetKey(olc::Key::R).bPressed && startup)
+		{
+			OnUserReset();
+		}
+		else if (GetKey(olc::Key::NP1).bPressed && startup)
+		{
+			dfs = true;
+		}
+		else if (GetKey(olc::Key::NP2).bPressed && startup)
+		{
+			bfs = true;
+		}
+		else if (GetKey(olc::Key::NP3).bPressed && startup)
+		{
+			djs = true;
+		}
+		else if (GetKey(olc::Key::NP4).bPressed && startup)
+		{
+			astar = true;
+		}
+		else if (GetKey(olc::Key::S).bHeld && GetKey(olc::Key::SHIFT).bHeld && rComplete == false && randomize == false)
+		{
+			rComplete = true;
+			finishRand();
+
+		}
+		else if (GetKey(olc::Key::ESCAPE).bPressed)
+		{
+			exit(1);
+		}
+
+		if (!rComplete && randomizeDraw(randomize))						
+		{
+			randomize = false;
+		}
 
 		return true;
 	}
@@ -85,7 +243,7 @@ public:
 int main()
 {
 	Pathfinder demo;
-	if (demo.Construct(1024, 960, 10, 10, 1,1,1))
+	if (demo.Construct(512, 480, 10, 10, 1,1,1))
 		demo.Start();
 
 	return 0;
