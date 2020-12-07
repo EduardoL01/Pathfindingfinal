@@ -2,6 +2,7 @@
 #include "olcPixelGameEngine.h"
 #include <vector>
 #include <stack>
+#include <queue>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -57,6 +58,8 @@ struct Maze
 	stack<Maze::node*> rStack;																	//is the randomize stack
 	node* sNode;
 	node* eNode;
+	queue<Maze::node*> BFSq;
+	stack<Maze::node*> DFSs;
 	pair<int,int> start = make_pair(0,0);
 	pair<int,int> end = make_pair(0, 0);
 

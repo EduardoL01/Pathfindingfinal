@@ -237,8 +237,68 @@ public:
 		return true;
 	}
 
-};
+	bool BFS(bool init)
+	{
+		if (init)
+		{
+			Maze::node* current = NULL;
+			map<Maze::node*, bool> visited;
+			maze.BFSq.push(maze.sNode);
+			visited.emplace(maze.sNode, true);
+			while (!maze.BFSq.empty())
+			{
+				if (current = maze.eNode)										//end reached
+				{
+					return false;
+				}
+				current = maze.BFSq.front();									//otherwise pop off top node
+				maze.BFSq.pop();
+				for (int i = 0; i < current->adj.size(); i++)					//iterate through its connected neighbors
+				{
+					if (!visited.count(current->adj[i]))						//if the neighbor is unvisited
+					{
+						maze.BFSq.push(current->adj[i]);						//enqueue it
+					}
+				}
+			}
+		}
 
+		return false;
+	}
+
+	bool DFS(bool init)
+	{
+		if (init)
+		{
+			Maze::node* current = NULL;
+			map<Maze::node*, bool> visited;
+			maze.DFSs.push(maze.sNode);
+			visited.emplace(maze.sNode, true);
+			while (!maze.DFSs.empty())
+			{
+				if (current = maze.eNode)										//if the end is reached, exit
+				{
+					return false;
+				}
+				current = maze.BFSq.front();									//otherwise pop off top node
+				maze.BFSq.pop();
+				for (int i = 0; i < current->adj.size(); i++)					//iterate through its connected neighbors
+				{
+					if (!visited.count(current->adj[i]))						//if the neighbor is unvisited
+					{
+						maze.BFSq.push(current->adj[i]);						//enqueue it
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	bool Djikstra(bool init)
+	{
+
+	}
+};
 
 int main()
 {
