@@ -2,11 +2,11 @@
 
 Maze::Maze()
 {
-	w = 25;
-	h = 25;
+	w = 100;								//TODO: BUG FOUND if h < w, subscript error
+	h = 90;
 
 	start = make_pair(0, 0);
-	end = make_pair(w - 1, w - 1);
+	end = make_pair(w - 1, h - 1);
 
 	graph.resize(w);
 	for (int i = 0; i < w; i++)
@@ -14,21 +14,71 @@ Maze::Maze()
 		graph[i].resize(h);
 	}
 
-	for (auto i : graph) 
+	for (int x = 0; x < w; x++)
 	{
-		for (auto j : i)
+		for (int y = 0; y < h; y++)
 		{
-			j.tile = 1;
+			graph[x][y].tile = 0;
+			graph[x][y].loc = make_pair(x, y);
+			if (x == 0 && y == 0)									//top left edgecase
+			{
+				graph[x][y].adj.push_back(&graph[x + 1][y]);
+				graph[x][y].adj.push_back(&graph[x][y + 1]);
+			}																
+			else if (x == 0 && y == h - 1)							//bot left edgecase
+			{
+				graph[x][y].adj.push_back(&graph[x + 1][y]);
+				graph[x][y].adj.push_back(&graph[x][y - 1]);
+			}
+			else if (x == w - 1 && y == 0)							//top right edgecase
+			{
+				graph[x][y].adj.push_back(&graph[x - 1][y]);
+				graph[x][y].adj.push_back(&graph[x][y + 1]);
+			}
+			else if (x == w - 1 && y == h - 1)						//bot right edgecase
+			{
+				graph[x][y].adj.push_back(&graph[x - 1][y]);
+				graph[x][y].adj.push_back(&graph[x][y - 1]);
+			}
+			else if (x == 0 && (y > 0 && y < h - 1) )				//leftside edge
+			{
+				graph[x][y].adj.push_back(&graph[x + 1][y]);
+				graph[x][y].adj.push_back(&graph[x][y + 1]);
+				graph[x][y].adj.push_back(&graph[x][y - 1]);
+			}
+			else if (x == w - 1 && (y > 0 && y < h - 1) )			//rightside edge
+			{
+				graph[x][y].adj.push_back(&graph[x - 1][y]);
+				graph[x][y].adj.push_back(&graph[x][y + 1]);
+				graph[x][y].adj.push_back(&graph[x][y - 1]);
+			}
+			else if (y == 0 && (x > 0 && x < w - 1))				//topside edge
+			{
+				graph[x][y].adj.push_back(&graph[x][y + 1]);
+				graph[x][y].adj.push_back(&graph[x + 1][y]);
+				graph[x][y].adj.push_back(&graph[x - 1][y]);
+			}
+			else if (y == h - 1 && (x > 0 && x < w - 1))			//botside edge
+			{
+				graph[x][y].adj.push_back(&graph[x][y - 1]);
+				graph[x][y].adj.push_back(&graph[x + 1][y]);
+				graph[x][y].adj.push_back(&graph[x - 1][y]);
+			}
+			else
+			{
+				graph[x][y].adj.push_back(&graph[x][y + 1]);
+				graph[x][y].adj.push_back(&graph[x][y - 1]);
+				graph[x][y].adj.push_back(&graph[x + 1][y]);
+				graph[x][y].adj.push_back(&graph[x - 1][y]);
+			}
 		}
-	}
-
-	for (int i = 0; i < h; i++)
-	{
-		graph[0][i].tile = 1;
 	}
 
 	graph[start.first][start.second].tile = 2;
 	graph[end.first][end.second].tile = 2;
+	sNode = &graph[start.first][start.second];
+	eNode = &graph[end.first][end.second];
+	randomize();
 }
 
 void Maze::addVx(int x, int y, int val)
@@ -39,9 +89,10 @@ void Maze::addVx(int x, int y, int val)
 void Maze::randomize()
 {
 	node* current = NULL;
-	node* choosen = NULL;
+	node* chosen = NULL;
 	//initialize random seed
-	srand(time(NULL));
+	//srand(time(NULL));
+	srand(1);
 	//intitialize a stack
 	stack<node*> s;
 	//push starting node onto stack and mark as visited
@@ -52,26 +103,36 @@ void Maze::randomize()
 	{
 		//pop node from stack and make it current node
 		current = s.top();
-		s.pop();
-		//if the node has any unvisited neighbors
-		for (int i = 0; i < current->adj.size(); i++)
+
+		vector<node*> unvisit = current->returnAdj();
+
+		if (!unvisit.empty())
 		{
-			if (!current->adj[i]->visited)
+			//choose a random unvisited neighbor
+			chosen = unvisit[rand() % unvisit.size()];
+
+			//process chosen
+			chosen->tile = 1;
+			chosen->visited = 1;
+			current->neighbors.push_back(chosen);
+			chosen->neighbors.push_back(current);
+
+			/*for (auto n : unvisit)
 			{
-				//push current node onto stack
-				s.push(current);
-				//choose a random unvisited neighbor
-				choosen = current->adj[rand() % current->adj.size()];
-				//connect the path between current node and choosen neighbor
-				addEdge(choosen, current);
-				//mark chosen node as visited and push it onto stack
-				choosen->visited = true;
-				s.push(choosen);
-				//get out of for loop
-				break;
-			}
+				if (n != chosen)
+				{
+					s.push(n);
+				}
+			}*/
+			s.push(chosen);
+		}
+		else
+		{
+			s.pop();
 		}
 	}
+
+	eNode->tile = 2;
 }
 
 int Maze::getVertex(int x, int y)
