@@ -7,11 +7,6 @@ class Pathfinder : public olc::PixelGameEngine
 public:
 
 	Maze maze;
-	bool randomize = 0;
-	bool vBFS = 0;
-	bool vDFS = 0;
-	bool vDjs = 0;
-	bool draw = 0;
 
 	Pathfinder()
 	{
@@ -19,6 +14,55 @@ public:
 	}
 
 public:
+	void drawMaze()
+	{
+		for (int x = 1; x <= maze.w; x++)												//ScreenWidth(); x++)
+		{
+			for (int y = 1; y <= maze.h; y++)											//ScreenHeight(); y++)
+			{
+				switch (maze.graph[x - 1][y - 1].tile)
+					{
+					default:
+						break;
+					case 0:
+					{
+						FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::BLACK));
+						break;
+					}
+					case 1:
+					{
+						FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::WHITE));
+						if (maze.graph[x - 1][y - 1].returnPaths().first)							//if it has an east connection, draw it
+						{
+							DrawLine((x * 10) + 9, y * 10, (x * 10) + 9, (y * 10) + 8, olc::WHITE);
+						}
+						if (maze.graph[x - 1][y - 1].returnPaths().second)							//if it has a south connection, draw it
+						{
+							DrawLine((x * 10), (y * 10) + 9, (x * 10) + 8, (y * 10) + 9, olc::WHITE);
+						}
+						break;
+					}
+					case 2:
+					{
+						FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::BLUE));
+						if (maze.graph[x - 1][y - 1].returnPaths().first)							//if it has an east connection, draw it
+						{
+							DrawLine((x * 10) + 9, y * 10, (x * 10) + 9, (y * 10) + 8, olc::WHITE);
+						}
+						if (maze.graph[x - 1][y - 1].returnPaths().second)							//if it has a south connection, draw it
+						{
+							DrawLine((x * 10), (y * 10) + 9, (x * 10) + 8, (y * 10) + 9, olc::WHITE);
+						}
+						break;
+					}
+				}
+
+
+			}
+
+		}
+	}
+
 	bool OnUserCreate() override
 	{
 		// Called once at the start, so create things here
@@ -29,43 +73,19 @@ public:
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		// called once per frame
-		Clear(olc::Pixel(olc::GREY));
-
-		for (int x = 0; x <	maze.w; x++)												//ScreenWidth(); x++)
-			for (int y = 0; y <	maze.h; y++)											//ScreenHeight(); y++)
-			{
-				switch (maze.graph[x][y].tile)
-				{
-				default:
-					break;
-				case 0:
-					FillRect(x * 10, y* 10, 8, 8, olc::Pixel(olc::GREY));
-					//Draw(x, y, olc::Pixel(olc::BLACK));
-					break;
-				case 1:
-					FillRect(x * 10, y * 10, 8, 8, olc::Pixel(olc::WHITE));
-					//Draw(x, y, olc::Pixel(olc::WHITE));
-					break;
-				case 2:
-					FillRect(x * 10, y * 10, 8, 8, olc::Pixel(olc::BLUE));
-					//Draw(x, y, olc::Pixel(olc::BLUE));
-					break;
-				}
-				
-
-			}
-
-		;
+		Clear(olc::Pixel(olc::BLACK));		
+		drawMaze();
 
 		return true;
 	}
+
 };
 
 
 int main()
 {
 	Pathfinder demo;
-	if (demo.Construct(512, 480, 4, 4))
+	if (demo.Construct(1024, 960, 10, 10, 1,1,1))
 		demo.Start();
 
 	return 0;
