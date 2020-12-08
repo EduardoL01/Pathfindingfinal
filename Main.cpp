@@ -17,71 +17,69 @@ public:
 
 public:
 
-	bool BFS(bool init)
+
+	bool DFS(bool init)
 	{
 		Maze::node* current = NULL;
 		if (init)
 		{
-			maze.BFSq.push(maze.sNode);
-			maze.visitedBFS[maze.sNode] = true;
-
+			maze.DFSs.push(maze.sNode);
+			maze.visitedDFS[maze.sNode] = true;
 		}
-		if (!maze.BFSq.empty())
+			
+			
+			
+		if (!maze.DFSs.empty())
 		{
-			current = maze.BFSq.front();									//pop off top node
-			maze.BFSq.pop();
+			current = maze.DFSs.top();										//pop off top node
+			maze.DFSs.pop();
+
 			if (current == maze.eNode)										//if the end is reached, exit
 			{
+				while (!maze.DFSs.empty())
+				{
+					current = maze.DFSs.top();
+					current->tile = 3;
+					maze.DFSs.pop();
+				}
 				return false;
 			}
 
-			if (!maze.visitedBFS[current])
+			if (!maze.visitedDFS[current])
 			{
-				maze.visitedBFS[current] = true;
+				maze.visitedDFS[current] = true;
 			}
 
 			for (int i = 0; i < current->neighbors.size(); i++)					//iterate through its connected neighbors
 			{
-				if (!maze.visitedBFS[current->neighbors[i]])						//if the neighbor is unvisited
+				if (!maze.visitedDFS[current->neighbors[i]])						//if the neighbor is unvisited
 				{
-					maze.visitedBFS[current->neighbors[i]] = true;
+					maze.visitedDFS[current->neighbors[i]] = true;
+					current->neighbors[i]->parent = current;
 					int x = current->neighbors[i]->loc.first + 1;
 					int y = current->neighbors[i]->loc.second + 1;
 					current->neighbors[i]->tile = 2;
 					FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::GREEN));
-					maze.BFSq.push(current->neighbors[i]);						//enqueue it
+					maze.DFSs.push(current->neighbors[i]);						//enqueue it
 				}
 			}
 		}
-		return false;
-	}
-
-	bool DFS(bool init)
-	{
-		if (init)
+		else
 		{
-			Maze::node* current = NULL;
-			map<Maze::node*, bool> visited;
-			maze.DFSs.push(maze.sNode);
-			visited.emplace(maze.sNode, true);
-			if (!maze.DFSs.empty())
+			//dfsComplete = true;
+			if (maze.eNode->parent != NULL)
 			{
-				current = maze.DFSs.top();										//pop off top node
-				maze.DFSs.pop();
-				if (current = maze.eNode)										//if the end is reached, exit
+				Maze::node* temp = maze.eNode->parent;
+				while (temp->parent != NULL)
 				{
-					return false;
+					temp->tile = 3;
+					temp = temp->parent;
 				}
-				for (int i = 0; i < current->adj.size(); i++)					//iterate through its connected neighbors
-				{
-					if (!visited.count(current->adj[i]))						//if the neighbor is unvisited
-					{
-						maze.DFSs.push(current->adj[i]);						//enqueue it
-					}
-				}
+				dfsComplete = true;
 			}
+			return false;
 		}
-		return false;
+		
 	}
 
 	bool Djikstra(bool init)
@@ -134,6 +132,65 @@ public:
 		}
 	}
 
+	bool BFS(bool init)
+	{
+		Maze::node* current = NULL;
+		if (init)
+		{
+			maze.BFSq.push(maze.sNode);
+			maze.visitedBFS[maze.sNode] = true;
+
+		}
+		if (!maze.BFSq.empty())
+		{
+			current = maze.BFSq.front();									//pop off top node
+			maze.BFSq.pop();
+			if (current == maze.eNode)										//if the end is reached, exit
+			{
+				while (!maze.BFSq.empty())
+				{
+					current = maze.BFSq.front();
+					current->tile = 3;
+					maze.BFSq.pop();
+				}
+				return false;
+			}
+
+			if (!maze.visitedBFS[current])
+			{
+				maze.visitedBFS[current] = true;
+			}
+
+			for (int i = 0; i < current->neighbors.size(); i++)					//iterate through its connected neighbors
+			{
+				if (!maze.visitedBFS[current->neighbors[i]])						//if the neighbor is unvisited
+				{
+					maze.visitedBFS[current->neighbors[i]] = true;
+					current->neighbors[i]->parent = current;
+					int x = current->neighbors[i]->loc.first + 1;
+					int y = current->neighbors[i]->loc.second + 1;
+					current->neighbors[i]->tile = 2;
+					FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::GREEN));
+					maze.BFSq.push(current->neighbors[i]);						//enqueue it
+				}
+			}
+		}
+		else
+		{
+			if (maze.eNode->parent != NULL)
+			{
+				Maze::node* temp = maze.eNode->parent;
+				while (temp->parent != NULL)
+				{
+					temp->tile = 3;
+					temp = temp->parent;
+				}
+				bfsComplete = true;
+			}
+			return false;
+		}
+	}
+
 	bool randomizeDraw(bool init)
 	{
 		Maze::node* chosen = NULL;
@@ -176,20 +233,24 @@ public:
 		}
 		else
 		{
+			if (startup)
+			{
+				rComplete = true;
+			}
 			return false;
 		}
 
 		int x = current->loc.first + 1;
 		int y = current->loc.second + 1;
 		FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::GREEN));
-		if (maze.graph[x - 1][y - 1].returnPaths().first)							//if it has an east connection, draw it
-		{
-			DrawLine((x * 10) + 9, y * 10, (x * 10) + 9, (y * 10) + 8, olc::WHITE);
-		}
-		if (maze.graph[x - 1][y - 1].returnPaths().second)							//if it has a south connection, draw it
-		{
-			DrawLine((x * 10), (y * 10) + 9, (x * 10) + 8, (y * 10) + 9, olc::WHITE);
-		}
+		//if (maze.graph[x - 1][y - 1].returnPaths().first)							//if it has an east connection, draw it
+		//{
+		//	DrawLine((x * 10) + 9, y * 10, (x * 10) + 9, (y * 10) + 8, olc::WHITE);
+		//}
+		//if (maze.graph[x - 1][y - 1].returnPaths().second)							//if it has a south connection, draw it
+		//{
+		//	DrawLine((x * 10), (y * 10) + 9, (x * 10) + 8, (y * 10) + 9, olc::WHITE);
+		//}
 		return true;
 	}
 
@@ -234,12 +295,43 @@ public:
 						}
 						break;
 					}
+					case 3:
+					{
+						FillRect(x * 10, y * 10, 9, 9, olc::GREEN);					//draws a green pixel
+						if (maze.graph[x - 1][y - 1].returnPaths().first)							//if it has an east connection, draw it
+						{
+							DrawLine((x * 10) + 9, y * 10, (x * 10) + 9, (y * 10) + 8, olc::WHITE);
+						}
+						if (maze.graph[x - 1][y - 1].returnPaths().second)							//if it has a south connection, draw it
+						{
+							DrawLine((x * 10), (y * 10) + 9, (x * 10) + 8, (y * 10) + 9, olc::WHITE);
+						}
+						break;
+					}
 				}
 
 
 			}
 
 		}
+	}
+
+	void clearMaze()
+	{
+		for (int x = 0; x < maze.w ; x++)
+		{
+			for (int y = 0; y<maze.h;y++)
+			{
+				maze.graph[x][y].parent = NULL;
+				maze.graph[x][y].tile = 1;
+			}
+		}
+		maze.eNode->tile = 3;
+		maze.sNode->tile = 3;
+		bfs = 0, dfs = 0, djs = 0, astar = 0, reset = 0;
+		rComplete = 0, startupComplete = 0, dfsComplete = 0, bfsComplete = 0, djsComplete = 0, astarComplete = 0;
+		maze.visitedBFS.clear();
+		maze.visitedDFS.clear();
 	}
 
 	bool OnUserReset()
@@ -278,7 +370,7 @@ public:
 		{
 			OnUserReset();
 		}
-		else if (GetKey(olc::Key::NP1).bPressed && startup)
+		else if (GetKey(olc::Key::D).bPressed && startup)
 		{
 			dfs = true;
 		}
@@ -286,7 +378,7 @@ public:
 		{
 			bfs = true;
 		}
-		else if (GetKey(olc::Key::NP3).bPressed && startup)
+		else if (GetKey(olc::Key::Q).bPressed && startup)
 		{
 			djs = true;
 		}
@@ -304,15 +396,23 @@ public:
 		{
 			exit(1);
 		}
+		else if (GetKey(olc::Key::Z).bPressed)
+		{
+			clearMaze();
+		}
 
 		if (!rComplete && randomizeDraw(randomize))						
 		{
 			randomize = false;
 		}
 
-		if (bfs && BFS(bfs))
+		if (!bfsComplete && BFS(bfs))
 		{
 			bfs = false;
+		}
+		if (!dfsComplete && DFS(dfs))
+		{
+			dfs = false;
 		}
 
 		return true;

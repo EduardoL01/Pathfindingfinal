@@ -5,8 +5,26 @@ Maze::Maze()
 	w = 45;														//TODO: BUG FOUND if h < w, subscript error
 	h = 40;
 
-	start = make_pair(0, 0);
-	end = make_pair(w - 1, h - 1);
+	start = make_pair(w/2, h/2);
+	int dir = rand() % 4;
+	switch (dir)
+	{
+	default:
+		break;
+	case 0:
+		end = make_pair(w - 1, h - 1);
+		break;
+	case 1:
+		end = make_pair(0, 0);
+		break;
+	case 2:
+		end = make_pair(0, h - 1);
+		break;
+	case 3:
+		end = make_pair(w - 1, 0);
+		break;
+	}
+	//end = make_pair(w - 1, h - 1);
 
 	graph.resize(w);
 	for (int i = 0; i < w; i++)

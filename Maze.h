@@ -19,7 +19,8 @@ struct Maze
 		pair<int, int> loc;															// 0 - wall, 1 - empty, 2 - flag
 		vector<node*> neighbors;
 		vector<node*> adj;
-		bool visited = false;		
+		bool visited = false;
+		node* parent = NULL;
 		vector<node*> returnAdj()
 		{
 			vector<node*> nVisit;
@@ -56,6 +57,7 @@ struct Maze
 	vector<vector<node>> graph;														//stores our out-degree edges, each non-border node connects to its adj neighbor
 	unordered_map<Maze::node*, bool> visitedBFS;
 	unordered_map<Maze::node*, bool> visitedDFS;
+	vector<node*> path;
 
 	int w = 0;
 	int h = 0;
