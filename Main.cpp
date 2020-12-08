@@ -247,12 +247,12 @@ public:
 			visited.emplace(maze.sNode, true);
 			while (!maze.BFSq.empty())
 			{
-				if (current = maze.eNode)										//end reached
+				current = maze.BFSq.front();									//otherwise pop off top node
+				maze.BFSq.pop();
+				if (current = maze.eNode)										//if the end is reached, exit
 				{
 					return false;
 				}
-				current = maze.BFSq.front();									//otherwise pop off top node
-				maze.BFSq.pop();
 				for (int i = 0; i < current->adj.size(); i++)					//iterate through its connected neighbors
 				{
 					if (!visited.count(current->adj[i]))						//if the neighbor is unvisited
@@ -276,17 +276,17 @@ public:
 			visited.emplace(maze.sNode, true);
 			while (!maze.DFSs.empty())
 			{
+				current = maze.DFSs.top();										//otherwise pop off top node
+				maze.DFSs.pop();
 				if (current = maze.eNode)										//if the end is reached, exit
 				{
 					return false;
 				}
-				current = maze.BFSq.front();									//otherwise pop off top node
-				maze.BFSq.pop();
 				for (int i = 0; i < current->adj.size(); i++)					//iterate through its connected neighbors
 				{
 					if (!visited.count(current->adj[i]))						//if the neighbor is unvisited
 					{
-						maze.BFSq.push(current->adj[i]);						//enqueue it
+						maze.DFSs.push(current->adj[i]);						//enqueue it
 					}
 				}
 			}
@@ -296,7 +296,10 @@ public:
 
 	bool Djikstra(bool init)
 	{
-
+		set<Maze::node*> processed;
+		set<Maze::node*> unprocessed;
+		vector<Maze::node*> shortestpath;
+		vector<Maze::node*> predecessor;
 	}
 };
 
