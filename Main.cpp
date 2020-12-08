@@ -247,7 +247,7 @@ public:
 			visited.emplace(maze.sNode, true);
 			while (!maze.BFSq.empty())
 			{
-				current = maze.BFSq.front();									//otherwise pop off top node
+				current = maze.BFSq.front();									//pop off top node
 				maze.BFSq.pop();
 				if (current = maze.eNode)										//if the end is reached, exit
 				{
@@ -276,7 +276,7 @@ public:
 			visited.emplace(maze.sNode, true);
 			while (!maze.DFSs.empty())
 			{
-				current = maze.DFSs.top();										//otherwise pop off top node
+				current = maze.DFSs.top();										//pop off top node
 				maze.DFSs.pop();
 				if (current = maze.eNode)										//if the end is reached, exit
 				{
@@ -298,8 +298,9 @@ public:
 	{
 		set<Maze::node*> processed;
 		set<Maze::node*> unprocessed;
-		vector<Maze::node*> shortestpath;
-		vector<Maze::node*> predecessor;
+		map<Maze::node*, int> distances;										//all distances need to be initialized to 0
+
+		map<Maze::node*, Maze::node*> predecessor;
 	}
 };
 
