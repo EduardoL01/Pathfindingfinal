@@ -18,6 +18,7 @@ Maze::Maze()
 	{
 		for (int y = 0; y < h; y++)
 		{
+			visitedBFS.emplace(&graph[x][y], false);
 			graph[x][y].tile = 0;
 			graph[x][y].loc = make_pair(x, y);
 			if (x == 0 && y == 0)									//top left edgecase

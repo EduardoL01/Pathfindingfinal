@@ -54,6 +54,9 @@ struct Maze
 
 	
 	vector<vector<node>> graph;														//stores our out-degree edges, each non-border node connects to its adj neighbor
+	unordered_map<Maze::node*, bool> visitedBFS;
+	unordered_map<Maze::node*, bool> visitedDFS;
+
 	int w = 0;
 	int h = 0;
 	stack<Maze::node*> rStack;																	//is the randomize stack

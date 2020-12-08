@@ -17,6 +17,82 @@ public:
 
 public:
 
+	bool BFS(bool init)
+	{
+		Maze::node* current = NULL;
+		if (init)
+		{
+			maze.BFSq.push(maze.sNode);
+			maze.visitedBFS[maze.sNode] = true;
+
+		}
+		if (!maze.BFSq.empty())
+		{
+			current = maze.BFSq.front();									//pop off top node
+			maze.BFSq.pop();
+			if (current == maze.eNode)										//if the end is reached, exit
+			{
+				return false;
+			}
+
+			if (!maze.visitedBFS[current])
+			{
+				maze.visitedBFS[current] = true;
+			}
+
+			for (int i = 0; i < current->neighbors.size(); i++)					//iterate through its connected neighbors
+			{
+				if (!maze.visitedBFS[current->neighbors[i]])						//if the neighbor is unvisited
+				{
+					maze.visitedBFS[current->neighbors[i]] = true;
+					int x = current->neighbors[i]->loc.first + 1;
+					int y = current->neighbors[i]->loc.second + 1;
+					current->neighbors[i]->tile = 2;
+					FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::GREEN));
+					maze.BFSq.push(current->neighbors[i]);						//enqueue it
+				}
+			}
+		}
+		return false;
+	}
+
+	bool DFS(bool init)
+	{
+		if (init)
+		{
+			Maze::node* current = NULL;
+			map<Maze::node*, bool> visited;
+			maze.DFSs.push(maze.sNode);
+			visited.emplace(maze.sNode, true);
+			if (!maze.DFSs.empty())
+			{
+				current = maze.DFSs.top();										//pop off top node
+				maze.DFSs.pop();
+				if (current = maze.eNode)										//if the end is reached, exit
+				{
+					return false;
+				}
+				for (int i = 0; i < current->adj.size(); i++)					//iterate through its connected neighbors
+				{
+					if (!visited.count(current->adj[i]))						//if the neighbor is unvisited
+					{
+						maze.DFSs.push(current->adj[i]);						//enqueue it
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	bool Djikstra(bool init)
+	{
+		set<Maze::node*> processed;
+		set<Maze::node*> unprocessed;
+		map<Maze::node*, int> distances;										//all distances need to be initialized to 0
+
+		map<Maze::node*, Maze::node*> predecessor;
+	}
+
 	void finishRand()
 	{
 		Maze::node* current = NULL;
@@ -206,7 +282,7 @@ public:
 		{
 			dfs = true;
 		}
-		else if (GetKey(olc::Key::NP2).bPressed && startup)
+		else if (GetKey(olc::Key::B).bPressed && startup)
 		{
 			bfs = true;
 		}
@@ -234,80 +310,21 @@ public:
 			randomize = false;
 		}
 
+		if (bfs && BFS(bfs))
+		{
+			bfs = false;
+		}
+
 		return true;
 	}
 
-	bool BFS(bool init)
-	{
-		if (init)
-		{
-			Maze::node* current = NULL;
-			map<Maze::node*, bool> visited;
-			maze.BFSq.push(maze.sNode);
-			visited.emplace(maze.sNode, true);
-			while (!maze.BFSq.empty())
-			{
-				current = maze.BFSq.front();									//pop off top node
-				maze.BFSq.pop();
-				if (current = maze.eNode)										//if the end is reached, exit
-				{
-					return false;
-				}
-				for (int i = 0; i < current->adj.size(); i++)					//iterate through its connected neighbors
-				{
-					if (!visited.count(current->adj[i]))						//if the neighbor is unvisited
-					{
-						maze.BFSq.push(current->adj[i]);						//enqueue it
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
-	bool DFS(bool init)
-	{
-		if (init)
-		{
-			Maze::node* current = NULL;
-			map<Maze::node*, bool> visited;
-			maze.DFSs.push(maze.sNode);
-			visited.emplace(maze.sNode, true);
-			while (!maze.DFSs.empty())
-			{
-				current = maze.DFSs.top();										//pop off top node
-				maze.DFSs.pop();
-				if (current = maze.eNode)										//if the end is reached, exit
-				{
-					return false;
-				}
-				for (int i = 0; i < current->adj.size(); i++)					//iterate through its connected neighbors
-				{
-					if (!visited.count(current->adj[i]))						//if the neighbor is unvisited
-					{
-						maze.DFSs.push(current->adj[i]);						//enqueue it
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	bool Djikstra(bool init)
-	{
-		set<Maze::node*> processed;
-		set<Maze::node*> unprocessed;
-		map<Maze::node*, int> distances;										//all distances need to be initialized to 0
-
-		map<Maze::node*, Maze::node*> predecessor;
-	}
+	
 };
 
 int main()
 {
 	Pathfinder demo;
-	if (demo.Construct(512, 480, 10, 10, 1,1,1))
+	if (demo.Construct(512, 480, 10, 10, 0,0,1))
 		demo.Start();
 
 	return 0;
