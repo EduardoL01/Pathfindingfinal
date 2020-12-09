@@ -2,6 +2,8 @@
 #include "olcPixelGameEngine.h"
 #include <vector>
 #include <stack>
+#include <queue>
+#include <set>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -14,10 +16,12 @@ struct Maze
 
 	struct node {																	//each nodes need to store its neighbors and whether is a flag or wall
 		int tile = 1;
-		pair<int, int> loc;															// 0 - wall, 1 - empty, 2 - flag
+		pair<int, int> loc;															// 0 - wall, 1 - empty, 2 - pathflag, 3 - start,end, pathnodes
 		vector<node*> neighbors;
 		vector<node*> adj;
-		bool visited = false;		
+		int R, G, B;
+		bool visited = false;
+		node* parent = NULL;
 		vector<node*> returnAdj()
 		{
 			vector<node*> nVisit;
@@ -50,13 +54,21 @@ struct Maze
 		}
  	};
 
-	
-	vector<vector<node>> graph;														//stores our out-degree edges, each non-border node connects to its adj neighbor
 	int w = 0;
 	int h = 0;
+	int pathSize = 0;
+
+	vector<vector<node>> graph;														//stores our out-degree edges, each non-border node connects to its adj neighbor
+	unordered_map<Maze::node*, bool> visitedBFS;
+	unordered_map<Maze::node*, bool> visitedDFS;
+	vector<node*> path;
+
+	
 	stack<Maze::node*> rStack;																	//is the randomize stack
 	node* sNode;
 	node* eNode;
+	queue<Maze::node*> BFSq;
+	stack<Maze::node*> DFSs;
 	pair<int,int> start = make_pair(0,0);
 	pair<int,int> end = make_pair(0, 0);
 

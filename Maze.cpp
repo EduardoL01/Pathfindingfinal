@@ -5,8 +5,26 @@ Maze::Maze()
 	w = 45;														//TODO: BUG FOUND if h < w, subscript error
 	h = 40;
 
-	start = make_pair(0, 0);
-	end = make_pair(w - 1, h - 1);
+	start = make_pair(w/2, h/2);
+	int dir = rand() % 4;
+	switch (dir)
+	{
+	default:
+		break;
+	case 0:
+		end = make_pair(w - 1, h - 1);
+		break;
+	case 1:
+		end = make_pair(0, 0);
+		break;
+	case 2:
+		end = make_pair(0, h - 1);
+		break;
+	case 3:
+		end = make_pair(w - 1, 0);
+		break;
+	}
+	//end = make_pair(w - 1, h - 1);
 
 	graph.resize(w);
 	for (int i = 0; i < w; i++)
@@ -18,6 +36,7 @@ Maze::Maze()
 	{
 		for (int y = 0; y < h; y++)
 		{
+			visitedBFS.emplace(&graph[x][y], false);
 			graph[x][y].tile = 0;
 			graph[x][y].loc = make_pair(x, y);
 			if (x == 0 && y == 0)									//top left edgecase
@@ -74,8 +93,8 @@ Maze::Maze()
 		}
 	}
 
-	graph[start.first][start.second].tile = 2;
-	graph[end.first][end.second].tile = 2;
+	graph[start.first][start.second].tile = 3;
+	graph[end.first][end.second].tile = 3;
 	sNode = &graph[start.first][start.second];
 	eNode = &graph[end.first][end.second];
 	//randomize();
