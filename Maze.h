@@ -16,9 +16,10 @@ struct Maze
 
 	struct node {																	//each nodes need to store its neighbors and whether is a flag or wall
 		int tile = 1;
-		pair<int, int> loc;															// 0 - wall, 1 - empty, 2 - flag
+		pair<int, int> loc;															// 0 - wall, 1 - empty, 2 - pathflag, 3 - start,end, pathnodes
 		vector<node*> neighbors;
 		vector<node*> adj;
+		int R, G, B;
 		bool visited = false;
 		node* parent = NULL;
 		vector<node*> returnAdj()
@@ -53,14 +54,16 @@ struct Maze
 		}
  	};
 
-	
+	int w = 0;
+	int h = 0;
+	int pathSize = 0;
+
 	vector<vector<node>> graph;														//stores our out-degree edges, each non-border node connects to its adj neighbor
 	unordered_map<Maze::node*, bool> visitedBFS;
 	unordered_map<Maze::node*, bool> visitedDFS;
 	vector<node*> path;
 
-	int w = 0;
-	int h = 0;
+	
 	stack<Maze::node*> rStack;																	//is the randomize stack
 	node* sNode;
 	node* eNode;

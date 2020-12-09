@@ -93,8 +93,8 @@ Maze::Maze()
 		}
 	}
 
-	graph[start.first][start.second].tile = 2;
-	graph[end.first][end.second].tile = 2;
+	graph[start.first][start.second].tile = 3;
+	graph[end.first][end.second].tile = 3;
 	sNode = &graph[start.first][start.second];
 	eNode = &graph[end.first][end.second];
 	//randomize();
