@@ -22,6 +22,11 @@ struct Maze
 		int R, G, B;
 		bool visited = false;
 		node* parent = NULL;
+
+
+		float hScore = 0;
+		float gScore = 0;
+
 		vector<node*> returnAdj()
 		{
 			vector<node*> nVisit;
@@ -51,6 +56,11 @@ struct Maze
 
 			}
 			return paths;
+		}
+
+		bool operator()(const node& lhs, const node& rhs) const
+		{
+			return (lhs.hScore + lhs.gScore) < (rhs.hScore + rhs.gScore);
 		}
  	};
 
