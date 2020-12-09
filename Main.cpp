@@ -82,13 +82,45 @@ public:
 		
 	}
 
-	bool Djikstra(bool init)
+	//pseudocode is from a GeeksforGeeks post on A*, still don't understand how this algorithm works though
+	bool Astar(bool init)
 	{
-		set<Maze::node*> processed;
-		set<Maze::node*> unprocessed;
-		map<Maze::node*, int> distances;										//all distances need to be initialized to 0
+		Maze::node* current = NULL;
+		//openSet: create a map that maps the nodes to an f value, initialize with the start node with an f = 0
+		//closedSet: create another map that maps the nodes to an f value, initialized empty
+		// f = g + h, g = distance of a node from the startpoint, h = est distance of the node from the endpoint
+		if (init)
+		{
+							
+		}
 
-		map<Maze::node*, Maze::node*> predecessor;
+		//if openSet is not empty
+		if ()
+		{
+			//search openSet for the smallest f
+			//set current to this node
+			//pop it off openSet
+			//iterate through each neighbor of current
+			for ()
+			{
+				//if neighbor is the endpoint 
+				if ()
+				{
+					//stop
+				}
+				//if neighbor is already in openSet
+				else if ()
+				{
+					//skip it
+				}
+				//else if neigbbor is NOT in the closeSet
+				else if ()
+				{
+					//add it to the openSet
+				}
+			}
+			//add the node to the closed set
+		}
 	}
 
 	void finishRand()
