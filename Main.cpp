@@ -60,7 +60,6 @@ public:
 	}
 
 	//pseudocode is from a GeeksforGeeks post on A*, still don't understand how this algorithm works though
-	/*
 	bool Astar(bool init)
 	{
 		Maze::node* current = NULL;
@@ -100,7 +99,6 @@ public:
 			//add the node to the closed set
 		}
 	}
-	*/
 
 	bool DFS(bool init)
 	{
