@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -22,10 +23,11 @@ struct Maze
 		int R, G, B;
 		bool visited = false;
 		node* parent = NULL;
-
+		bool Avisited = false;
 
 		float hScore = 0;
-		float gScore = 0;
+		float gScore = INFINITY;
+		float fScore = INFINITY;
 
 		vector<node*> returnAdj()
 		{
@@ -60,7 +62,7 @@ struct Maze
 
 		bool operator()(const node& lhs, const node& rhs) const
 		{
-			return (lhs.hScore + lhs.gScore) < (rhs.hScore + rhs.gScore);
+			return (lhs.fScore) < (rhs.fScore);
 		}
  	};
 
@@ -71,16 +73,17 @@ struct Maze
 	vector<vector<node>> graph;														//stores our out-degree edges, each non-border node connects to its adj neighbor
 	unordered_map<Maze::node*, bool> visitedBFS;
 	unordered_map<Maze::node*, bool> visitedDFS;
-	vector<node*> path;
-
 	
 	stack<Maze::node*> rStack;																	//is the randomize stack
 	node* sNode;
 	node* eNode;
+	node* Acurrent;
 	queue<Maze::node*> BFSq;
 	stack<Maze::node*> DFSs;
 	pair<int,int> start = make_pair(0,0);
 	pair<int,int> end = make_pair(0, 0);
+
+	list<Maze::node*> openList;
 
 	Maze();
 	void randomize();
@@ -91,4 +94,5 @@ struct Maze
 	void GenerateMaze(int width, int height);
 	int Djikstra();
 	int DFS();
+	double calcDist(Maze::node& a, Maze::node& b);
 };

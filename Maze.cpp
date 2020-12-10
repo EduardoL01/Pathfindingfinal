@@ -2,8 +2,8 @@
 
 Maze::Maze()
 {
-	w = 45;														//TODO: BUG FOUND if h < w, subscript error
-	h = 40;
+	w = 100;														//TODO: BUG FOUND if h < w, subscript error
+	h = 95;
 
 	start = make_pair(w/2, h/2);
 	int dir = rand() % 4;
@@ -26,11 +26,18 @@ Maze::Maze()
 	}
 	//end = make_pair(w - 1, h - 1);
 
+	
+
 	graph.resize(w);
 	for (int i = 0; i < w; i++)
 	{
 		graph[i].resize(h);
 	}
+
+	graph[start.first][start.second].tile = 3;
+	graph[end.first][end.second].tile = 3;
+	sNode = &graph[start.first][start.second];
+	eNode = &graph[end.first][end.second];
 
 	for (int x = 0; x < w; x++)
 	{
@@ -39,6 +46,7 @@ Maze::Maze()
 			visitedBFS.emplace(&graph[x][y], false);
 			graph[x][y].tile = 0;
 			graph[x][y].loc = make_pair(x, y);
+			graph[x][y].hScore = calcDist(graph[x][y], *eNode);
 			if (x == 0 && y == 0)									//top left edgecase
 			{
 				graph[x][y].adj.push_back(&graph[x + 1][y]);
@@ -93,10 +101,7 @@ Maze::Maze()
 		}
 	}
 
-	graph[start.first][start.second].tile = 3;
-	graph[end.first][end.second].tile = 3;
-	sNode = &graph[start.first][start.second];
-	eNode = &graph[end.first][end.second];
+	
 	//randomize();
 }
 
@@ -166,4 +171,12 @@ int Maze::Djikstra()
 int Maze::DFS()
 {
 	return 0;
+}
+
+double Maze::calcDist(Maze::node& a, Maze::node& b)
+{
+	double dx = pow(a.loc.first - b.loc.first, 2.0);
+	double dy = pow(a.loc.second - b.loc.second, 2.0);
+
+	return sqrt(dx + dy);
 }
