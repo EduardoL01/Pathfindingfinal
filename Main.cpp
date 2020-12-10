@@ -155,11 +155,10 @@ public:
 
 		while (!maze.openList.empty() && maze.Acurrent != maze.eNode)
 		{
-			//std::cout << "successfully entered loop\n";
 
-			maze.openList.sort([](const Maze::node* lhs, const Maze::node* rhs) {return lhs->fScore < rhs->fScore; });
+			maze.openList.sort([](const Maze::node* lhs, const Maze::node* rhs) {return lhs->fScore < rhs->fScore; });//define sorting of node objects based on fscore
 
-			while (!maze.openList.empty() && maze.openList.front()->Avisited)
+			while (!maze.openList.empty() && maze.openList.front()->Avisited)			//as long as the nodes in the unvisited set havent been processed
 			{
 				maze.openList.pop_front();
 			}
@@ -179,7 +178,7 @@ public:
 				maze.openList.push_back(maze.Acurrent->neighbors[i]);
 				maze.Acurrent->neighbors[i]->tile = 2;
 
-				double goal = maze.Acurrent->gScore + 1;
+				double goal = maze.Acurrent->gScore + 1;					//adjacent nodes always have a distance of 1 (we only connect via cardinal corners
 
 				if (goal < maze.Acurrent->neighbors[i]->gScore)
 				{
@@ -190,7 +189,7 @@ public:
 					maze.Acurrent->neighbors[i]->fScore = maze.Acurrent->neighbors[i]->gScore + maze.Acurrent->neighbors[i]->hScore;
 				}
 			}
-			//break;
+
 
 		}
 		if (maze.eNode->parent != NULL && !dfsRun && !bfsRun)
@@ -272,7 +271,7 @@ public:
 		}
 		else
 		{
-			//dfsComplete = true;
+
 			if (maze.eNode->parent != NULL)
 			{
 				Maze::node* temp = maze.eNode->parent;
@@ -392,12 +391,11 @@ public:
 				temp = temp->parent;
 				k++;
 			}
-			//dfsComplete = true;
+
 		}
 		maze.sNode->tile = 3;
 		maze.eNode->tile = 3;
-		//std::cout << maze.pathSize;
-		//dfsRun = false;
+
 	}
 
 	bool BFS(bool init)
@@ -438,8 +436,7 @@ public:
 					int x = current->neighbors[i]->loc.first + 1;
 					int y = current->neighbors[i]->loc.second + 1;
 					current->neighbors[i]->tile = 2;
-					FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::GREEN));
-
+					FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::GREEN));		//draw front of q
 					maze.BFSq.push(current->neighbors[i]);						//enqueue it
 				}
 			}
@@ -464,10 +461,10 @@ public:
 						}
 
 					}
-					if (j == temp->neighbors.size())
+					if (j == temp->neighbors.size())					//draws the path using a color gradient
 					{
 						temp->tile = 4;
-						if (k % 50 == 0)
+						if (k % 50 == 0)								//ensures that the color gradient scales according to the size of the path
 						{
 							l += 3;
 						}
@@ -480,7 +477,7 @@ public:
 					temp = temp->parent;
 					k++;
 				}
-				maze.sNode->tile = 3;
+				maze.sNode->tile = 3;									//set end and start node tile
 				maze.eNode->tile = 3;
 				bfsComplete = true;
 			}
@@ -623,14 +620,7 @@ public:
 		int x = current->loc.first + 1;
 		int y = current->loc.second + 1;
 		FillRect(x * 10, y * 10, 9, 9, olc::Pixel(olc::GREEN));
-		//if (maze.graph[x - 1][y - 1].returnPaths().first)							//if it has an east connection, draw it
-		//{
-		//	DrawLine((x * 10) + 9, y * 10, (x * 10) + 9, (y * 10) + 8, olc::WHITE);
-		//}
-		//if (maze.graph[x - 1][y - 1].returnPaths().second)							//if it has a south connection, draw it
-		//{
-		//	DrawLine((x * 10), (y * 10) + 9, (x * 10) + 8, (y * 10) + 9, olc::WHITE);
-		//}
+	
 		return true;
 	}
 
